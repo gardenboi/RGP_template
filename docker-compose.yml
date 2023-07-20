@@ -1,0 +1,57 @@
+version: "3.9"  # Use the appropriate version of Docker Compose
+
+services:
+  postgis:
+    image: postgis/postgis:15-3.3  # Use the official PostGIS image
+    container_name: postgis_container  # Choose a custom container name
+    volumes:
+      - ./local_pgdata:/var/lib/postgresql/data  
+    ports:
+      - "5432:5432"  # Expose PostGIS container port 5432 to the host
+    environment:
+      POSTGRES_USER: postgres  # Replace "my_user" with your desired PostgreSQL username
+      POSTGRES_PASSWORD: postgres  # Replace "my_password" with your desired PostgreSQL password
+      POSTGRES_DB: km0  # Replace "my_database" with your desired PostgreSQL database name
+
+  pgadmin:
+    image: dpage/pgadmin4:6.14
+    container_name: pgadmin4_container
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com  # Replace with your email
+      PGADMIN_DEFAULT_PASSWORD: admin  # Replace with your desired pgAdmin password
+    volumes:
+      - ./pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgis
+  
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: frontend_container
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    container_name: backend_container
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: postgis  # Use the container name of the PostGIS service as the host name
+      DB_PORT: 5432
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: km0
+    depends_on:
+      - postgis  # Ensure the PostGIS service starts before the backend service
+
+volumes:
+  local_pgdata:
+  pgadmin-data:
