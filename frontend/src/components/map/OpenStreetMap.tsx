@@ -1,13 +1,16 @@
-import { Marker, Popup, useMapEvents } from "react-leaflet";
+import { Marker, Popup } from "react-leaflet";
 import { MapContainer } from "react-leaflet/MapContainer";
 import { TileLayer } from "react-leaflet/TileLayer";
-import { useMap } from "react-leaflet/hooks";
+import 'leaflet/dist/leaflet.css'; // Missing in the official documentation
 
-import { useState } from "react";
+//import { useMap } from "react-leaflet/hooks";
+//import { useState } from "react";
+//import icon from 'leaflet/dist/images/marker-icon.png';
+//import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
 export default function OpenStreetMap() {
   return (
-    <>
+    <div id="map">
       <MapContainer center={[51.505, -0.09]} zoom={13} scrollWheelZoom={false}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -19,6 +22,6 @@ export default function OpenStreetMap() {
           </Popup>
         </Marker>
       </MapContainer>
-    </>
+    </div>
   );
 }
